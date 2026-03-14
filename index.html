@@ -3,344 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>链接与资源管理工具</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
-
-        body {
-            background-color: #f5f5f5;
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .container {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .form-section {
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .list-section {
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        h1 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        h2 {
-            color: #444;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #eee;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #555;
-        }
-
-        input, textarea, button {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-
-        textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        button {
-            background-color: #2196F3;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
-        button:hover {
-            background-color: #1976D2;
-        }
-
-        .search-box {
-            margin-bottom: 20px;
-        }
-
-        .resource-item {
-            border: 1px solid #eee;
-            border-radius: 4px;
-            padding: 15px;
-            margin-bottom: 15px;
-            background-color: #fafafa;
-        }
-
-        .resource-item h3 {
-            margin-bottom: 10px;
-            color: #2196F3;
-        }
-
-        .resource-item p {
-            margin-bottom: 10px;
-            color: #666;
-        }
-
-        .resource-item img {
-            max-width: 100%;
-            border-radius: 4px;
-            margin: 10px 0;
-        }
-
-        .resource-item a {
-            color: #2196F3;
-            text-decoration: none;
-        }
-
-        .resource-item a:hover {
-            text-decoration: underline;
-        }
-
-        .delete-btn {
-            background-color: #f44336;
-            padding: 8px 12px;
-            font-size: 14px;
-            margin-top: 10px;
-            width: auto;
-        }
-
-        .delete-btn:hover {
-            background-color: #d32f2f;
-        }
-
-        .empty-message {
-            text-align: center;
-            color: #999;
-            padding: 30px;
-        }
-
-        .tag {
-            display: inline-block;
-            background-color: #e3f2fd;
-            color: #1976D2;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            margin-right: 5px;
-            margin-bottom: 5px;
-        }
-    </style>
+    <title>我的全球可访问网站</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
-<body>
-    <h1>链接与资源管理工具</h1>
-    
-    <div class="container">
-        <!-- 添加资源表单 -->
-        <div class="form-section">
-            <h2>添加新资源</h2>
-            <form id="resourceForm">
-                <div class="form-group">
-                    <label for="title">标题 (必填)</label>
-                    <input type="text" id="title" required placeholder="输入资源标题">
-                </div>
-                
-                <div class="form-group">
-                    <label for="url">链接地址</label>
-                    <input type="url" id="url" placeholder="输入网址 (http/https开头)">
-                </div>
-                
-                <div class="form-group">
-                    <label for="description">描述/备注</label>
-                    <textarea id="description" placeholder="输入资源描述或备注信息"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="imageUrl">图片链接</label>
-                    <input type="url" id="imageUrl" placeholder="输入图片URL (http/https开头)">
-                </div>
-                
-                <div class="form-group">
-                    <label for="keywords">关键词 (用逗号分隔)</label>
-                    <input type="text" id="keywords" placeholder="例如: 学习,编程,工具">
-                </div>
-                
-                <button type="submit">保存资源</button>
-            </form>
-        </div>
+<body class="max-w-4xl mx-auto p-4">
+    <h1 class="text-3xl font-bold mb-6">我的专属网站</h1>
 
-        <!-- 资源列表与搜索 -->
-        <div class="list-section">
-            <h2>资源列表</h2>
-            
-            <div class="search-box">
-                <label for="searchInput">关键词搜索</label>
-                <input type="text" id="searchInput" placeholder="输入关键词搜索标题、描述或关键词">
-            </div>
-            
-            <div id="resourceList" class="resource-list">
-                <!-- 资源项将通过JS动态生成 -->
-                <div class="empty-message">
-                    暂无资源，请添加第一个资源吧！
-                </div>
-            </div>
+    <!-- 搜索框 -->
+    <div class="mb-6">
+        <input type="text" id="search-input" placeholder="输入关键词搜索内容..." 
+               class="w-full p-2 border border-gray-300 rounded">
+        <button onclick="searchContent()" class="mt-2 p-2 bg-blue-500 text-white rounded">搜索</button>
+    </div>
+
+    <!-- 内容上传表单 -->
+    <div class="border p-4 rounded mb-6">
+        <h2 class="text-xl font-semibold mb-3">上传新内容</h2>
+        <div class="mb-2">
+            <label>标题：</label>
+            <input type="text" id="content-title" class="w-full p-2 border border-gray-300 rounded" placeholder="输入标题">
         </div>
+        <div class="mb-2">
+            <label>链接：</label>
+            <input type="url" id="content-link" class="w-full p-2 border border-gray-300 rounded" placeholder="输入链接（可选）">
+        </div>
+        <div class="mb-2">
+            <label>图片：</label>
+            <input type="file" id="content-image" accept="image/*" class="w-full p-2">
+        </div>
+        <button onclick="uploadContent()" class="p-2 bg-green-500 text-white rounded">上传内容</button>
+    </div>
+
+    <!-- 内容展示区 -->
+    <div id="content-list" class="space-y-4">
+        <!-- 内容会动态加载 -->
     </div>
 
     <script>
-        // 初始化资源数组
-        let resources = JSON.parse(localStorage.getItem('resourceLibrary')) || [];
+        // 👇 替换成你自己的 GitHub 信息！👇
+        const GITHUB_CONFIG = {
+            owner: "你的GitHub用户名", // 比如 testuser
+            repo: "你的仓库名", // 比如 testuser.github.io
+            token: "你的GitHub Token", // 后续步骤会教你生成
+            contentPath: "content/",
+            imagePath: "assets/"
+        };
 
-        // DOM元素
-        const resourceForm = document.getElementById('resourceForm');
-        const resourceList = document.getElementById('resourceList');
-        const searchInput = document.getElementById('searchInput');
+        // 页面加载时加载所有内容
+        window.onload = loadAllContent;
 
-        // 页面加载时渲染资源列表
-        document.addEventListener('DOMContentLoaded', renderResources);
+        // 1. 加载所有内容
+        async function loadAllContent() {
+            try {
+                // 先创建content和assets目录（如果不存在）
+                await createDirIfNotExist(GITHUB_CONFIG.contentPath);
+                await createDirIfNotExist(GITHUB_CONFIG.imagePath);
 
-        // 表单提交事件
-        resourceForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // 获取表单数据
-            const title = document.getElementById('title').value.trim();
-            const url = document.getElementById('url').value.trim();
-            const description = document.getElementById('description').value.trim();
-            const imageUrl = document.getElementById('imageUrl').value.trim();
-            const keywords = document.getElementById('keywords').value.trim().split(',').map(k => k.trim()).filter(k => k);
+                const res = await axios.get(
+                    `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.contentPath}`,
+                    { headers: { Authorization: `token ${GITHUB_CONFIG.token}` } }
+                );
 
-            // 创建新资源对象
-            const newResource = {
-                id: Date.now(), // 使用时间戳作为唯一ID
-                title,
-                url,
-                description,
-                imageUrl,
-                keywords,
-                createTime: new Date().toLocaleString()
-            };
+                const contentList = document.getElementById("content-list");
+                contentList.innerHTML = "";
 
-            // 添加到资源数组并保存到本地存储
-            resources.unshift(newResource); // 添加到开头
-            saveResources();
-            
-            // 重新渲染列表
-            renderResources();
-            
-            // 重置表单
-            resourceForm.reset();
-            
-            // 提示成功
-            alert('资源添加成功！');
-        });
-
-        // 搜索功能
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase().trim();
-            renderResources(searchTerm);
-        });
-
-        // 渲染资源列表
-        function renderResources(searchTerm = '') {
-            // 清空列表
-            resourceList.innerHTML = '';
-
-            // 过滤资源
-            let filteredResources = resources;
-            if (searchTerm) {
-                filteredResources = resources.filter(resource => {
-                    // 搜索标题、描述、关键词
-                    const searchableText = [
-                        resource.title.toLowerCase(),
-                        resource.description.toLowerCase(),
-                        resource.keywords.join(' ').toLowerCase(),
-                        resource.url.toLowerCase()
-                    ].join(' ');
-                    
-                    return searchableText.includes(searchTerm);
-                });
-            }
-
-            // 如果没有资源
-            if (filteredResources.length === 0) {
-                resourceList.innerHTML = `
-                    <div class="empty-message">
-                        ${searchTerm ? '未找到匹配的资源' : '暂无资源，请添加第一个资源吧！'}
-                    </div>
-                `;
-                return;
-            }
-
-            // 渲染资源项
-            filteredResources.forEach(resource => {
-                const resourceItem = document.createElement('div');
-                resourceItem.className = 'resource-item';
-                resourceItem.innerHTML = `
-                    <h3>${resource.title}</h3>
-                    ${resource.url ? `<p><a href="${resource.url}" target="_blank">${resource.url}</a></p>` : ''}
-                    ${resource.description ? `<p>${resource.description}</p>` : ''}
-                    ${resource.imageUrl ? `<img src="${resource.imageUrl}" alt="${resource.title}">` : ''}
-                    <div>
-                        ${resource.keywords.map(keyword => `<span class="tag">${keyword}</span>`).join('')}
-                    </div>
-                    <p style="font-size: 12px; color: #999; margin-top: 10px;">
-                        添加时间: ${resource.createTime}
-                    </p>
-                    <button class="delete-btn" data-id="${resource.id}">删除</button>
-                `;
-                resourceList.appendChild(resourceItem);
-            });
-
-            // 添加删除事件监听
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const resourceId = parseInt(this.getAttribute('data-id'));
-                    if (confirm('确定要删除这个资源吗？')) {
-                        // 过滤掉要删除的资源
-                        resources = resources.filter(resource => resource.id !== resourceId);
-                        saveResources();
-                        renderResources(searchInput.value.toLowerCase().trim());
+                for (const file of res.data) {
+                    if (file.name.endsWith(".json")) {
+                        const contentRes = await axios.get(file.download_url);
+                        const content = contentRes.data;
+                        contentList.innerHTML += `
+                            <div class="border p-3 rounded">
+                                <h3 class="text-lg font-semibold">${content.title}</h3>
+                                ${content.imageUrl ? `<img src="${content.imageUrl}" class="my-2 max-w-xs rounded" alt="图片">` : ""}
+                                ${content.link ? `<a href="${content.link}" target="_blank" class="text-blue-500">访问链接</a>` : ""}
+                                <p class="text-gray-600 text-sm mt-1">发布时间：${content.createTime}</p>
+                            </div>
+                        `;
                     }
-                });
+                }
+            } catch (err) {
+                alert("加载内容失败：" + err.message);
+                console.error(err);
+            }
+        }
+
+        // 2. 搜索功能
+        function searchContent() {
+            const keyword = document.getElementById("search-input").value.trim().toLowerCase();
+            const allItems = document.querySelectorAll("#content-list > div");
+            allItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = keyword === "" || text.includes(keyword) ? "block" : "none";
             });
         }
 
-        // 保存资源到本地存储
-        function saveResources() {
-            localStorage.setItem('resourceLibrary', JSON.stringify(resources));
+        // 3. 上传内容
+        async function uploadContent() {
+            const title = document.getElementById("content-title").value.trim();
+            const link = document.getElementById("content-link").value.trim();
+            const imageFile = document.getElementById("content-image").files[0];
+
+            if (!title) {
+                alert("标题不能为空！");
+                return;
+            }
+
+            try {
+                let imageUrl = "";
+                if (imageFile) {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(imageFile);
+                    reader.onload = async function() {
+                        const base64Data = this.result.split(",")[1];
+                        const imageRes = await axios.put(
+                            `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.imagePath}${Date.now()}-${imageFile.name}`,
+                            { message: `上传图片: ${imageFile.name}`, content: base64Data },
+                            { headers: { Authorization: `token ${GITHUB_CONFIG.token}` } }
+                        );
+                        imageUrl = imageRes.data.content.download_url;
+                        await uploadContentJSON(title, link, imageUrl);
+                    };
+                } else {
+                    await uploadContentJSON(title, link, imageUrl);
+                }
+            } catch (err) {
+                alert("上传失败：" + err.message);
+                console.error(err);
+            }
+        }
+
+        // 辅助：上传JSON文件
+        async function uploadContentJSON(title, link, imageUrl) {
+            const contentData = {
+                title: title,
+                link: link,
+                imageUrl: imageUrl,
+                createTime: new Date().toLocaleString()
+            };
+            const contentJson = JSON.stringify(contentData, null, 2);
+            const base64Content = btoa(unescape(encodeURIComponent(contentJson)));
+
+            await axios.put(
+                `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.contentPath}${Date.now()}.json`,
+                { message: `添加内容: ${title}`, content: base64Content },
+                { headers: { Authorization: `token ${GITHUB_CONFIG.token}` } }
+            );
+
+            alert("上传成功！");
+            loadAllContent();
+            // 清空表单
+            document.getElementById("content-title").value = "";
+            document.getElementById("content-link").value = "";
+            document.getElementById("content-image").value = "";
+        }
+
+        // 辅助：创建目录（如果不存在）
+        async function createDirIfNotExist(dirPath) {
+            try {
+                await axios.get(
+                    `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${dirPath}`,
+                    { headers: { Authorization: `token ${GITHUB_CONFIG.token}` } }
+                );
+            } catch (err) {
+                if (err.response.status === 404) {
+                    await axios.put(
+                        `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${dirPath}.gitkeep`,
+                        { message: `创建目录: ${dirPath}`, content: btoa("") },
+                        { headers: { Authorization: `token ${GITHUB_CONFIG.token}` } }
+                    );
+                }
+            }
         }
     </script>
 </body>
